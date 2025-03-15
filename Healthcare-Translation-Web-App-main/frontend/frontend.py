@@ -71,33 +71,11 @@ if audio_option == "Upload an Audio File":
         else:
             st.error("Error during speech-to-text")
 else:
-    # Title and description
-    st.title("Record Your Message")
-    st.write("Click the button below to start recording your message.")
-    
-    # Use Streamlit's file uploader to allow the user to upload an audio file
-    uploaded_audio = st.file_uploader("Upload Audio", type=["wav", "mp3", "webm", "ogg"])
+    st.header("Record Your Message")
 
-    if uploaded_audio is not None:
-        # Show audio player
-        st.audio(uploaded_audio)
-        
-        # Handle the audio file, process and upload it
-        if st.button('Upload Audio'):
-            # Save audio to a temporary file
-            with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-                temp_audio_file.write(uploaded_audio.getvalue())
-                temp_audio_file.close()
-                
-                # Use requests to send the file to the server
-                with open(temp_audio_file.name, 'rb') as f:
-                    files = {'file': (uploaded_audio.name, f, 'audio/webm')}
-                    response = requests.post('/upload_audio', files=files)
+    # Embed the HTML audio recording interface
+    st.components.v1.html(open("record_audio.html", "r").read(), height=300)
 
-                if response.status_code == 200:
-                    st.success("Audio uploaded successfully!")
-                else:
-                    st.error("Error uploading audio!")
+    # Placeholder to show some message during recording
+    st.write("Hold the 'Start Recording' button to record a message")
 
-                # Clean up the temporary file
-                os.remove(temp_audio_file.name)
