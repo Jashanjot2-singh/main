@@ -1,15 +1,13 @@
 import streamlit as st
 import requests
 import os
-import base64
-from io import BytesIO
-import time
 import tempfile
+from io import BytesIO
 
-# Backend URLs
-FASTAPI_URL = "http://localhost:8000"  # Adjust to your backend URL if deployed
+# Backend URLs (Adjust to your backend URL if deployed)
+FASTAPI_URL = "http://localhost:8000"  # Make sure to replace this with your FastAPI URL
 
-# Language Options
+# Language Options for translation
 LANGUAGES = {
     "English": "en",
     "Spanish": "es",
@@ -26,17 +24,46 @@ LANGUAGES = {
     "Turkish": "tr"
 }
 
-# Title
+# Title of the app
 st.title("Healthcare Translation Web App with Generative AI")
 
-# Language Selection
+# Language Selection for translation
 input_lang = st.selectbox("Select Input Language", list(LANGUAGES.keys()))
 output_lang = st.selectbox("Select Output Language", list(LANGUAGES.keys()))
 
 input_lang_code = LANGUAGES[input_lang]
 output_lang_code = LANGUAGES[output_lang]
 
-# Speech to Text Section
+# Function to handle audio recording and uploading
+def record_and_upload_audio():
+    # Use Streamlit's file uploader to allow the user to upload an audio file
+    uploaded_audio = st.file_uploader("Upload Audio", type=["wav", "mp3", "webm", "ogg"])
+
+    if uploaded_audio is not None:
+        # Show audio player for the uploaded file
+        st.audio(uploaded_audio)
+
+        # Process and upload the audio file when the button is pressed
+        if st.button('Upload Audio'):
+            # Save audio to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
+                temp_audio_file.write(uploaded_audio.getvalue())
+                temp_audio_file.close()
+
+                # Use requests to send the file to the server
+                with open(temp_audio_file.name, 'rb') as f:
+                    files = {'file': (uploaded_audio.name, f, 'audio/webm')}
+                    response = requests.post(f'{FASTAPI_URL}/upload_audio', files=files)
+
+                if response.status_code == 200:
+                    st.success("Audio uploaded successfully!")
+                else:
+                    st.error("Error uploading audio!")
+
+                # Clean up the temporary file
+                os.remove(temp_audio_file.name)
+
+# Speech to Text Section (Transcription of uploaded audio)
 st.header("Voice to Text")
 
 # Option for File Upload or Recording
@@ -49,17 +76,19 @@ if audio_option == "Upload an Audio File":
         # Upload to FastAPI for speech-to-text
         files = {"file": audio_file.getvalue()}
         response = requests.post(f"{FASTAPI_URL}/speech-to-text/", files=files)
+        
         if response.status_code == 200:
             text = response.json().get("text")
             st.write(f"Transcribed Text: {text}")
 
-            # Translate and generate audio
+            # Translate and generate audio when the "Translate and Speak" button is pressed
             if st.button("Translate and Speak"):
                 translation_response = requests.post(f"{FASTAPI_URL}/translate/", data={
                     "text": text,
                     "input_lang_code": input_lang_code,
                     "output_lang_code": output_lang_code,
                 })
+                
                 if translation_response.status_code == 200:
                     translated_data = translation_response.json()
                     translated_text = translated_data.get("translated_text")
@@ -71,52 +100,44 @@ if audio_option == "Upload an Audio File":
 
         else:
             st.error("Error during speech-to-text")
+
 else:
+    # Record audio message
+    record_and_upload_audio()
+
     st.header("Record Your Message")
 
-    # Embed the HTML audio recording interface using components.v1
-    st.components.v1.html(open("record_audio.html", "r").read(), height=300)
+    # Streamlit component for recording audio directly (no external HTML file required)
+    st.write("Record your message directly below:")
+    
+    # Audio recording functionality: We will use pydub for this, but it requires manual testing.
+    # Use Streamlit's file uploader to allow the user to upload an audio file.
+    uploaded_audio = st.file_uploader("Upload Audio", type=["wav", "mp3", "webm", "ogg"])
 
-    # Placeholder to show some message during recording
-    st.write("Hold the 'Start Recording' button to record a message")
-
-    # Once the audio file is recorded, the user can upload it for processing
-    if st.button("Process Recorded Audio"):
-        # Simulate uploading recorded audio (use the same method as for uploading)
-        audio_file = st.file_uploader("Upload Recorded Audio", type=["webm"])
-
-        if audio_file:
-            # Save to a temporary file for processing
+    if uploaded_audio is not None:
+        # Show audio player for the uploaded file
+        st.audio(uploaded_audio)
+        
+        # Process and upload the audio file when the button is pressed
+        if st.button('Upload Audio'):
+            # Save audio to a temporary file
             with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-                temp_audio_file.write(audio_file.getvalue())
+                temp_audio_file.write(uploaded_audio.getvalue())
                 temp_audio_file.close()
 
-                # Upload the file to the backend for speech-to-text
-                files = {"file": open(temp_audio_file.name, "rb")}
-                response = requests.post(f"{FASTAPI_URL}/speech-to-text/", files=files)
+                # Use requests to send the file to the server
+                with open(temp_audio_file.name, 'rb') as f:
+                    files = {'file': (uploaded_audio.name, f, 'audio/webm')}
+                    response = requests.post(f'{FASTAPI_URL}/upload_audio', files=files)
 
                 if response.status_code == 200:
-                    text = response.json().get("text")
-                    st.write(f"Transcribed Text: {text}")
-
-                    # Translate and generate audio
-                    if st.button("Translate and Speak"):
-                        translation_response = requests.post(f"{FASTAPI_URL}/translate/", data={
-                            "text": text,
-                            "input_lang_code": input_lang_code,
-                            "output_lang_code": output_lang_code,
-                        })
-                        if translation_response.status_code == 200:
-                            translated_data = translation_response.json()
-                            translated_text = translated_data.get("translated_text")
-                            st.write(f"Translated Text: {translated_text}")
-
-                            # Audio File for Playback
-                            audio_url = f"{FASTAPI_URL}/audio/{os.path.basename(translated_data['audio_file'])}"
-                            st.audio(audio_url)
-
+                    st.success("Audio uploaded successfully!")
                 else:
-                    st.error("Error during speech-to-text")
+                    st.error("Error uploading audio!")
 
                 # Clean up the temporary file
                 os.remove(temp_audio_file.name)
+
+# Main function to control app flow
+if __name__ == "__main__":
+    record_and_upload_audio()
