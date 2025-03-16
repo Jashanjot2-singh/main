@@ -37,7 +37,7 @@ This project is designed to bridge the language gap between patients and healthc
 - **Backend**: Python for core logic.
 - **APIs**:
   - Google Speech Recognition for transcription.
-  - Google Translate for translation.
+  - ollama model llama3.2:1b for translation.
   - gTTS for text-to-speech.
 - **Security**:
   - Fernet encryption (part of the cryptography library) for securing audio files.
