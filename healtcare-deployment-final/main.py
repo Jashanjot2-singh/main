@@ -3,7 +3,7 @@ import tempfile
 import os
 import wave
 import io
-from pydub import AudioSegment
+#from pydub import AudioSegment
 from gtts import gTTS
 from cryptography.fernet import Fernet
 import logging
