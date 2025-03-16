@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "healthcare-translation-web-app"
+version = "0.1.0"
+description = "A healthcare translation web app using generative AI for voice-to-text, translation, and speech generation."
+authors = ["Jashanjot <jashanjotdhiman@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Jashanjot2-singh/main/healthcare-deployment-final"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+streamlit = "^1.12.0"
+pydub = "^0.25.1"
+gtts = "^2.2.3"
+cryptography = "^3.4.8"
+requests = "^2.26.0"
+speechrecognition = "^3.8.1"
+pyttsx3 = "^2.90"
+flask = "^2.0.1"
+pillow = "^8.4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.6b0"
+isort = "^5.9.3"
+mypy = "^0.910"
+
+[tool.poetry.scripts]
+healthcare-translation-web-app = "app:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."streamlit.components"]
+"healthcare_translation_web_app" = "app:main"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[mypy]
+files = "app.py, tests/"
