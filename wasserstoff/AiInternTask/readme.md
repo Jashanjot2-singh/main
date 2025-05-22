@@ -86,8 +86,6 @@ For further questions regarding the project, please contact:
 
 Jashanjot singh
 
-📧 divyansh.sharma@thewasserstoff.com
-
 ### 🔗 Useful Links
 1. Ollama (LLMs + Embeddings)
 
