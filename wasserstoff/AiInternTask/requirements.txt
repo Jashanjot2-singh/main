@@ -1,0 +1,10 @@
+streamlit
+transformers
+torch
+Pillow
+langchain
+qdrant-client
+python-docx
+pandas
+openpyxl
+requests
