@@ -1,0 +1,105 @@
+{
+  "info": {
+    "name": "Asset Reminder API",
+    "_postman_id": "abcd1234-ef56-7890-gh12-ijklmnopqrst",
+    "description": "API for managing assets with service/expiration reminders",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Asset",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"A\",\n  \"service_time\": \"2025-06-26T22:00:00Z\",\n  \"expiration_time\": \"2025-06-26T23:00:00Z\",\n  \"is_serviced\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/assets/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "assets"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Assets",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/assets/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "assets"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Run Reminder Checks",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8000/run-checks/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "run-checks"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Notifications",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/notifications/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "notifications"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Violations",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/violations/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "violations"
+          ]
+        }
+      }
+    }
+  ]
+}
