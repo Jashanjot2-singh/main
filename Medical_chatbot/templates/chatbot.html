@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical AI Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #e4e6ea;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #16213e;
+            border-right: 1px solid #2d3748;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+            position: relative;
+        }
+
+        .new-chat-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: translateY(-1px);
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 12px 16px;
+            margin: 4px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a0a0a0;
+        }
+
+        .chat-item:hover {
+            background: #2d3748;
+            color: white;
+        }
+
+        .chat-item.active {
+            background: #2d4a73;
+            color: white;
+        }
+
+        .feature-tabs {
+            border-top: 1px solid #2d3748;
+            padding-top: 16px;
+        }
+
+        .tab-button {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #a0a0a0;
+            padding: 12px 16px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button:hover {
+            background: #2d3748;
+            color: white;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a1a2e;
+        }
+
+        .chat-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .sos-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar-msg {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .user-avatar-msg {
+            background: #4a9eff;
+            color: white;
+        }
+
+        .message-content {
+            background: #2d3748;
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .user .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .input-container {
+            padding: 20px 24px;
+            border-top: 1px solid #2d3748;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .input-box {
+            flex: 1;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #e4e6ea;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            line-height: 1.5;
+            font-family: inherit;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .input-box::placeholder {
+            color: #a0a0a0;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            min-width: 44px;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            transform: translateY(-1px);
+        }
+
+        .send-button:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .url-panel, .file-panel {
+            display: none;
+            padding: 20px;
+            background: #16213e;
+            border-bottom: 1px solid #2d3748;
+            animation: slideDown 0.3s ease;
+        }
+
+        .url-panel.active, .file-panel.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .close-panel-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .close-panel-btn:hover {
+            background: #dc2626;
+        }
+
+        .url-input-group, .file-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .url-input, .file-input {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #e4e6ea;
+            font-family: inherit;
+        }
+
+        .url-input:focus, .file-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .extract-button, .analyze-button {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .extract-button:hover, .analyze-button:hover {
+            background: linear-gradient(135deg, #38a169, #48bb78);
+            transform: translateY(-1px);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #4a5568;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #2d3748;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .file-preview {
+            margin-top: 12px;
+        }
+
+        .file-item {
+            background: #2d3748;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .file-item .remove-file {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .loading {
+            display: flex;
+            gap: 4px;
+            padding: 16px 20px;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: loading-bounce 1.4s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loading-bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .voice-button {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            color: #e4e6ea;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            transition: all 0.3s ease;
+        }
+
+        .voice-button:hover {
+            background: #4a5568;
+        }
+
+        .voice-button.recording {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            border-color: #ff4757;
+            animation: pulse 1s infinite;
+        }
+
+        /* Voice Conversion Modal */
+        .voice-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+        }
+
+        .voice-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal-content {
+            background: #16213e;
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .voice-modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            animation: voicePulse 2s infinite;
+        }
+
+        @keyframes voicePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .voice-modal-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .voice-modal-subtext {
+            font-size: 13px;
+            color: #94a3b8;
+            background: #4facfe;
+            border-radius: 50%;
+            animation: loading-bounce 1.4s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loading-bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .voice-button {
+            background: #374151;
+            border: 2px solid #4b5563;
+            color: #e4e6ea;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .voice-button:hover {
+            background: #4b5563;
+            border-color: #6b7280;
+        }
+
+        .voice-button.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        /* Voice Conversion Modal */
+        .voice-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .voice-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal-content {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 1px solid #475569;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .voice-modal-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            animation: voicePulse 2s infinite;
+        }
+
+        @keyframes voicePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .voice-modal-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .voice-modal-subtext {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        /* Main SOS Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid #2d3748;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .modal-title {
+            color: #ef4444;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: white;
+            background: #374151;
+        }
+
+        .emergency-contacts {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .emergency-contact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .emergency-contact:last-child {
+            border-bottom: none;
+        }
+
+        .call-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .call-button:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .emergency-textarea {
+            width: 100%;
+            background: #374151;
+            border: 2px solid #4b5563;
+            border-radius: 12px;
+            padding: 15px;
+            color: #e4e6ea;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .emergency-textarea:focus {
+            outline: none;
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #2d3748;
+        }
+
+        .danger-button {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .danger-button:hover {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            transform: translateY(-2px);
+        }
+
+        .secondary-button {
+            background: #6b7280;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: #4b5563;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: absolute;
+                z-index: 100;
+                height: 100%;
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-chat {
+                width: 100%;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        .messages-container::-webkit-scrollbar,
+        .chat-history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track,
+        .chat-history::-webkit-scrollbar-track {
+            background: #2d3748;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb,
+        .chat-history::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover,
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: #4facfe;
+        }
+    </style>
+</head>
+<body>
+    <!-- Voice Conversion Modal -->
+    <div class="voice-modal" id="voiceModal">
+        <div class="voice-modal-content">
+            <div class="voice-modal-icon">
+                <i class="fas fa-microphone-lines"></i>
+            </div>
+            <div class="voice-modal-text">Converting to Text...</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <button class="new-chat-btn" id="newChatBtn">
+                <i class="fas fa-plus"></i>
+                New Chat
+            </button>
+
+            <div class="chat-history" id="chatHistory">
+            </div>
+
+            <div class="feature-tabs">
+                <button class="tab-button active" data-tab="chat">
+                    <i class="fas fa-comments"></i>
+                    Chat
+                </button>
+                <button class="tab-button" data-tab="file">
+                    <i class="fas fa-file-upload"></i>
+                    Upload Files
+                </button>
+            </div>
+        </div>
+
+        <div class="main-chat">
+            <div class="chat-header">
+                <div class="header-title">
+                    <div class="bot-avatar">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <span>Medical AI Assistant</span>
+                </div>
+                <button class="voice-button" id="menuToggle" style="display: none;">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="file-panel" id="filePanel">
+                <div class="panel-header">
+                    <h6 class="panel-title">
+                        <i class="fas fa-file-upload"></i>
+                        Upload Medical Files
+                    </h6>
+                    <button class="close-panel-btn" id="closeFilePanel">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+                <div class="file-input-group">
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-2x mb-3"></i>
+                        <p>Drag and drop files here or click to browse</p>
+                        <small>Supported: Images, PDFs, Text, Audio</small>
+                        <input type="file" id="fileInput" multiple style="display:none;">
+                    </div>
+                    <div id="filePreview"></div>
+                    <input type="text" class="file-input" id="fileQuestion" placeholder="Optional: Ask a specific question about the files">
+                    <button class="analyze-button" id="analyzeBtn" style="display:none;">
+                        <i class="fas fa-search"></i> Analyze Files
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="message">
+                    <div class="message-avatar bot-avatar-msg">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="message-content">
+                        Hello! I'm your medical AI assistant. I can help you with:
+                        <br><br>
+                        • Medical questions and health advice
+                        <br>• Extract and analyze content from medical websites
+                        <br>• Process uploaded medical documents
+                        <br>• Respond to voice messages
+                        <br><br>
+                        How can I assist you today?
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea class="input-box" id="messageInput" placeholder="Ask me anything about your health..." rows="1"></textarea>
+                    <button class="voice-button" id="voiceButton">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="send-button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MedicalChatbot {
+            constructor() {
+                this.currentTab = 'chat';
+                this.isRecording = false;
+                this.mediaRecorder = null;
+                this.audioChunks = [];
+                this.currentChatId = this.generateChatId();
+                this.selectedFiles = [];
+                this.chats = {}; // Store all chat sessions
+                this.chatCounter = 0;
+                this.audioContext = null;
+                this.analyser = null;
+                this.silenceTimer = null;
+                this.silenceThreshold = 10; // Adjust this value (0-100)
+                this.silenceDelay = 1500; // Stop after 2 seconds of silence
+
+                this.initializeElements();
+                this.bindEvents();
+                this.startNewChat();
+            }
+
+            initializeElements() {
+                this.messagesContainer = document.getElementById('messagesContainer');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.voiceButton = document.getElementById('voiceButton');
+                this.urlPanel = document.getElementById('urlPanel');
+                this.filePanel = document.getElementById('filePanel');
+                this.fileInput = document.getElementById('fileInput');
+                this.fileUploadArea = document.getElementById('fileUploadArea');
+                this.filePreview = document.getElementById('filePreview');
+                this.fileQuestion = document.getElementById('fileQuestion');
+                this.analyzeBtn = document.getElementById('analyzeBtn');
+                this.voiceModal = document.getElementById('voiceModal');
+                this.chatHistory = document.getElementById('chatHistory');
+            }
+            bindEvents() {
+                // Send message events
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Voice recording
+                this.voiceButton.addEventListener('click', () => {
+                    if (this.isRecording) {
+                        this.stopRecording();
+                    } else {
+                        this.startRecording();
+                    }
+                });
+
+                // File upload events
+                this.fileUploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+
+                this.fileInput.addEventListener('change', (e) => {
+                    this.displayFilePreviews(e.target.files);
+                });
+
+                this.fileUploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.fileUploadArea.classList.add('dragover');
+                });
+
+                this.fileUploadArea.addEventListener('dragleave', () => {
+                    this.fileUploadArea.classList.remove('dragover');
+                });
+
+                this.fileUploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.fileUploadArea.classList.remove('dragover');
+                    this.displayFilePreviews(e.dataTransfer.files);
+                });
+
+                this.analyzeBtn.addEventListener('click', () => this.analyzeFiles());
+
+                // Auto-resize textarea
+                this.messageInput.addEventListener('input', () => {
+                    this.messageInput.style.height = 'auto';
+                    this.messageInput.style.height = this.messageInput.scrollHeight + 'px';
+                });
+
+                // Tab switching with toggle functionality
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        this.toggleTab(button.dataset.tab);
+                    });
+                });
+
+                document.getElementById('closeFilePanel').addEventListener('click', () => {
+                    this.closePanel('file');
+                });
+
+                // New chat button
+                document.getElementById('newChatBtn').addEventListener('click', () => {
+                    this.startNewChat();
+                });
+
+                this.voiceModal.addEventListener('click', (e) => {
+                    if (e.target === this.voiceModal) {
+                        this.voiceModal.classList.remove('active');
+                    }
+                });
+                // Clear database on page unload/refresh
+                window.addEventListener('beforeunload', () => {
+                    this.clearDatabaseOnExit();
+                });
+
+            }
+
+            toggleTab(tabName) {
+                const isCurrentlyActive = document.querySelector(`[data-tab="${tabName}"]`).classList.contains('active');
+
+                // Reset all tabs
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="chat"]`).classList.add('active');
+                this.filePanel.classList.remove('active');
+
+                // If clicking on a non-chat tab and it wasn't active, open it
+                if (tabName !== 'chat' && !isCurrentlyActive) {
+                    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                    document.querySelector(`[data-tab="chat"]`).classList.remove('active');
+                    this.filePanel.classList.add('active');
+                }
+
+                this.currentTab = tabName === 'chat' || isCurrentlyActive ? 'chat' : tabName;
+            }
+
+            closePanel(panelType) {
+                if (panelType === 'file') {
+                    this.filePanel.classList.remove('active');
+                }
+
+                // Reset tab buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="chat"]`).classList.add('active');
+                this.currentTab = 'chat';
+            }
+
+            generateChatId() {
+                return 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            addChatToHistory(title, chatId) {
+                const chatItem = document.createElement('div');
+                chatItem.className = 'chat-item';
+                chatItem.dataset.chatId = chatId;
+                chatItem.innerHTML = `
+                    <i class="fas fa-comment-medical"></i>
+                    <span>${title}</span>
+                `;
+
+                chatItem.addEventListener('click', () => {
+                    this.switchToChat(chatId);
+                });
+
+                // Remove active from all chats
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                chatItem.classList.add('active');
+                this.chatHistory.insertBefore(chatItem, this.chatHistory.firstChild);
+            }
+
+            switchToChat(chatId) {
+                if (!this.chats[chatId]) return;
+
+                // Save current chat before switching
+                if (this.currentChatId && this.chats[this.currentChatId]) {
+                    this.chats[this.currentChatId].messages = this.messagesContainer.innerHTML;
+                }
+
+                // Switch to new chat
+                this.currentChatId = chatId;
+                this.messagesContainer.innerHTML = this.chats[chatId].messages;
+
+                // Update active chat item
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelector(`[data-chat-id="${chatId}"]`).classList.add('active');
+
+                this.scrollToBottom();
+            }
+
+            startNewChat() {
+                // Save current chat if it exists
+                if (this.currentChatId && this.chats[this.currentChatId]) {
+                    this.chats[this.currentChatId].messages = this.messagesContainer.innerHTML;
+                }
+
+                this.chatCounter++;
+                this.currentChatId = this.generateChatId();
+                const chatTitle = `Chat ${this.chatCounter}`;
+
+                // Create new chat object
+                this.chats[this.currentChatId] = {
+                    id: this.currentChatId,
+                    title: chatTitle,
+                    messages: `
+                        <div class="message">
+                            <div class="message-avatar bot-avatar-msg">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="message-content">
+                                Hello! I'm your medical AI assistant. I can help you with:
+                                <br><br>
+                                • Medical questions and health advice
+                                <br>• Extract and analyze content from medical websites
+                                <br>• Process uploaded medical documents
+                                <br>• Respond to voice messages
+                                <br><br>
+                                How can I assist you today?
+                            </div>
+                        </div>
+                    `,
+                    createdAt: new Date()
+                };
+
+                // Update UI
+                this.messagesContainer.innerHTML = this.chats[this.currentChatId].messages;
+                this.addChatToHistory(chatTitle, this.currentChatId);
+                this.scrollToBottom();
+            }
+
+            addMessage(sender, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                const avatar = sender === 'user' ?
+                    '<div class="message-avatar user-avatar-msg"><i class="fas fa-user"></i></div>' :
+                    '<div class="message-avatar bot-avatar-msg"><i class="fas fa-user-md"></i></div>';
+                messageDiv.innerHTML = `
+                    ${avatar}
+                    <div class="message-content">${content}</div>
+                `;
+                this.messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+
+                // Update chat history
+                if (this.chats[this.currentChatId]) {
+                    this.chats[this.currentChatId].messages = this.messagesContainer.innerHTML;
+                }
+            }
+
+            addLoadingMessage() {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot';
+                messageDiv.innerHTML = `
+                    <div class="message-avatar bot-avatar-msg">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="loading">
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                            <div class="loading-dot"></div>
+                        </div>
+                    </div>
+                `;
+                messageDiv.id = 'loadingMessage';
+                this.messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+                return messageDiv;
+            }
+
+            removeLoadingMessage() {
+                const loadingMessage = document.getElementById('loadingMessage');
+                if (loadingMessage) {
+                    loadingMessage.remove();
+                }
+            }
+
+            scrollToBottom() {
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+
+            showVoiceModal() {
+                this.voiceModal.classList.add('active');
+            }
+
+            hideVoiceModal() {
+                this.voiceModal.classList.remove('active');
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message) return;
+
+                this.addMessage('user', message);
+                this.messageInput.value = '';
+                this.messageInput.style.height = 'auto';
+
+                const loadingMessage = this.addLoadingMessage();
+
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message })
+                    });
+
+                    const data = await response.json();
+                    this.removeLoadingMessage();
+
+                    if (data.response) {
+                        this.addMessage('bot', data.response);
+                    } else {
+                        this.addMessage('bot', 'No response from server.');
+                    }
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    this.removeLoadingMessage();
+                    this.addMessage('bot', 'Server error, please try again.');
+                }
+            }
+
+            async startRecording() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                    // Set up audio context for silence detection
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const source = this.audioContext.createMediaStreamSource(stream);
+                    this.analyser = this.audioContext.createAnalyser();
+                    this.analyser.fftSize = 512;
+                    source.connect(this.analyser);
+
+                    this.mediaRecorder = new MediaRecorder(stream);
+                    this.audioChunks = [];
+
+                    this.mediaRecorder.ondataavailable = (event) => {
+                        this.audioChunks.push(event.data);
+                    };
+
+                    this.mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                        const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+                        await this.processRecordedVoice(audioFile);
+                    };
+
+                    this.mediaRecorder.start();
+                    this.isRecording = true;
+                    this.voiceButton.classList.add('recording');
+                    this.voiceButton.innerHTML = '<i class="fas fa-stop"></i>';
+
+                    // Start monitoring for silence
+                    this.monitorSilence();
+                } catch (error) {
+                    console.error('Recording error:', error);
+                    this.addMessage('bot', 'Could not access microphone. Please check permissions.');
+                }
+            }
+
+            async stopRecording() {
+                if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+                    this.mediaRecorder.stop();
+                    this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                    this.isRecording = false;
+                    this.voiceButton.classList.remove('recording');
+                    this.voiceButton.innerHTML = '<i class="fas fa-microphone"></i>';
+
+                    // Clean up audio context
+                    if (this.audioContext) {
+                        this.audioContext.close();
+                        this.audioContext = null;
+                    }
+
+                    // Clear silence timer
+                    if (this.silenceTimer) {
+                        clearTimeout(this.silenceTimer);
+                        this.silenceTimer = null;
+                    }
+                }
+            }
+
+            monitorSilence() {
+                if (!this.isRecording || !this.analyser) return;
+
+                const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+                this.analyser.getByteFrequencyData(dataArray);
+
+                // Calculate average volume
+                const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+
+                if (average < this.silenceThreshold) {
+                    // Start silence timer if not already started
+                    if (!this.silenceTimer) {
+                        this.silenceTimer = setTimeout(() => {
+                            this.stopRecording();
+                        }, this.silenceDelay);
+                    }
+                } else {
+                    // Clear silence timer if sound is detected
+                    if (this.silenceTimer) {
+                        clearTimeout(this.silenceTimer);
+                        this.silenceTimer = null;
+                    }
+                }
+
+                // Continue monitoring
+                requestAnimationFrame(() => this.monitorSilence());
+            }
+
+            async processRecordedVoice(audioFile) {
+                try {
+                    this.showVoiceModal();
+
+                    const formData = new FormData();
+                    formData.append('voice_file', audioFile);
+
+                    const response = await fetch('/voicetranslator', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+
+                    this.hideVoiceModal();
+
+                    if (result.success) {
+                        this.messageInput.value = result.transcribed_text;
+                        this.messageInput.focus();
+                    } else {
+                        this.addMessage('bot', `Voice processing error: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('Voice processing error:', error);
+                    this.hideVoiceModal();
+                    this.addMessage('bot', 'Failed to process voice. Please try again.');
+                }
+            }
+
+            displayFilePreviews(files) {
+                this.filePreview.innerHTML = '';
+                this.selectedFiles = Array.from(files);
+
+                if (this.selectedFiles.length > 0) {
+                    this.analyzeBtn.style.display = 'block';
+                } else {
+                    this.analyzeBtn.style.display = 'none';
+                }
+
+                this.selectedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.classList.add('file-item');
+
+                    const fileIcon = file.type.includes('image') ? 'fa-image' :
+                                    file.type.includes('pdf') ? 'fa-file-pdf' :
+                                    file.type.includes('audio') ? 'fa-file-audio' : 'fa-file';
+
+                    fileItem.innerHTML = `
+                        <div>
+                            <i class="fas ${fileIcon}"></i>
+                            <span>${file.name}</span>
+                            <span>(${(file.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                        </div>
+                        <button class="remove-file" data-index="${index}">×</button>
+                    `;
+
+                    this.filePreview.appendChild(fileItem);
+                });
+
+                document.querySelectorAll('.remove-file').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        this.selectedFiles.splice(index, 1);
+                        this.displayFilePreviews(this.selectedFiles);
+                    });
+                });
+            }
+
+            async analyzeFiles() {
+                if (this.selectedFiles.length === 0) {
+                    this.addMessage('bot', 'Please select at least one file.');
+                    return;
+                }
+
+                const formData = new FormData();
+                this.selectedFiles.forEach(file => {
+                    formData.append('files', file);
+                });
+
+                const question = this.fileQuestion.value.trim();
+                if (question) {
+                    formData.append('question', question);
+                    this.addMessage('user', `Question: ${question}`);
+                }
+
+                this.addMessage('bot', 'Analyzing files...');
+
+                try {
+                    const response = await fetch('/upload_file', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        result.results.forEach(fileResult => {
+                            this.addMessage('user', `<strong>File: ${fileResult.filename}</strong>`);
+                            this.addMessage('bot', fileResult.analysis);
+                        });
+
+                        this.selectedFiles = [];
+                        this.filePreview.innerHTML = '';
+                        this.fileInput.value = '';
+                        this.fileQuestion.value = '';
+                        this.analyzeBtn.style.display = 'none';
+                    } else {
+                        this.addMessage('bot', `Error: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('File upload error:', error);
+                    this.addMessage('bot', 'Failed to analyze files. Please try again.');
+                }
+            }
+
+            async clearDatabaseOnExit() {
+                try {
+                    await fetch('/clear-history/', {
+                        method: 'GET'
+                    });
+                } catch (error) {
+                    console.error('Error clearing database:', error);
+                }
+            }
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `${type === 'success' ? 'success-message' : 'error-message'}`;
+                notification.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    ${message}
+                `;
+                const inputContainer = document.querySelector('.input-container');
+                inputContainer.parentNode.insertBefore(notification, inputContainer);
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new MedicalChatbot();
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                menuToggle.style.display = 'block';
+            } else {
+                menuToggle.style.display = 'none';
+                sidebar.classList.remove('open');
+            }
+        }
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize();
+    </script>
+</body>
+</html>
