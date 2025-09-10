@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
-GOOGLE_API_KEY = "AIzaSyBxpu-AYz_HqFnG8x8dc_fxqsrmZjPBL4s"
+GOOGLE_API_KEY = ""
 genai.configure(api_key=GOOGLE_API_KEY)
 
 # File upload configuration
@@ -599,7 +599,7 @@ def transcribe_voice_message(audio_file_path):
             raise FileNotFoundError(f"Audio file not found at: {audio_file_path}")
 
         # Configure the Gemini API with the API key from environment variables
-        GOOGLE_API_KEY = "AIzaSyBxpu-AYz_HqFnG8x8dc_fxqsrmZjPBL4s"
+        GOOGLE_API_KEY = ""
         if not GOOGLE_API_KEY:
             raise ValueError("GOOGLE_API_KEY environment variable is not set.")
 
@@ -753,5 +753,6 @@ def clear_chat_history():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
+
 
 
