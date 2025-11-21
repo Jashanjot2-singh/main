@@ -1,0 +1,126 @@
+Sample Resume — AI Engineer (4 Years Experience)
+
+Name: testing Location: Chandigarh, India
+Phone: +91-XXXXXXXXXX
+Email: testing.com
+
+LinkedIn: linkedin.com/in/jashan
+GitHub: github.com/jashanjot
+Portfolio: your-portfolio.com
+
+SUMMARY
+
+AI Engineer with 4 years of experience in building end-to-end machine learning, deep learning, and GenAI solutions. Skilled in NLP, LLM-based automation, computer vision, embeddings, vector databases, and real-time production systems. Experienced in designing APIs, RAG pipelines, multimodal models, and deploying scalable AI services using FastAPI, Python, and cloud environments.
+
+SKILLS
+Core AI & ML
+
+LLMs (LLaMA, GPT-4, Gemini, Mistral)
+
+Machine Learning (SVM, RF, XGBoost, Naive Bayes)
+
+NLP, RAG, embeddings (nomic, OpenAI, Gemini)
+
+Deep Learning (PyTorch, CNN, Transformers)
+
+Tech Stack
+
+Languages: Python, TypeScript, SQL
+
+Frameworks: FastAPI, Django, Streamlit
+
+Databases: Qdrant, MongoDB, MySQL
+
+Tools: Playwright, AutoGen, LangChain
+
+Cloud: GCP, AWS, Docker (optional), Vercel, Render
+
+Other Skills
+
+Web automation
+
+RESTful API development
+
+Microservices architecture
+
+Data engineering pipelines
+
+PROFESSIONAL EXPERIENCE
+AI Engineer
+
+Jio Platforms Ltd. | 2022 – Present
+Key Responsibilities & Achievements:
+
+Developed multimodal web-surfer agent using AutoGen (Magentic-One CLI) integrating Web Surfer Agent, File Agent, Computer Terminal, and Coder Agent.
+
+Built RAG pipelines using Qdrant, nomic-embed-text, and LLaMA/GPT models for internal search tools.
+
+Designed FastAPI-based AI microservices powering text summarization, document search, and automation tasks.
+
+Created real-time email spam detection system using SVM, Naive Bayes, and TF-IDF with Streamlit interface.
+
+Automated browser workflows using Playwright Python for internal business intelligence extraction.
+
+Implemented OCR pipeline using TrOCR for both handwritten and printed documents.
+
+Collaborated with product and engineering teams to deploy scalable AI features used across 7+ internal teams.
+
+AI/ML Developer
+
+Freelance / Projects | 2021 – 2022
+
+Built a Multilingual Speech-to-Speech Translator App using Google SpeechRecognition, gTTS, and Streamlit.
+
+Developed File Integrity Monitoring System using Watchdog, Hashlib, and Tkinter.
+
+Implemented Placement Prediction Model using SVM with Tkinter UI.
+
+Created a custom text-to-HTML translator using Django + Python.
+
+PROJECTS
+1. Document Research & Theme Identification Chatbot
+
+Built full-stack RAG system using Streamlit, Qdrant, TrOCR (OCR), and nomic/OpenAI/Gemini embeddings.
+
+Query routing + ranking + context generation evaluation.
+
+2. Advanced Web Scraper
+
+Automated login, article scraping, and content extraction using Playwright + BeautifulSoup.
+
+3. Medical Platform ‘Nidhaan’
+
+Architecture design for medicine delivery, doctor consultations, lab tests, and partner portal (React + FastAPI + MongoDB + WebSockets).
+
+4. Real-Time AI Chatbot
+
+Used LLaMA3 and AutoGen framework with Streamlit for UI.
+
+EDUCATION
+
+B.Tech — Computer Science Engineering
+2017 – 2021
+
+CERTIFICATIONS
+
+CCNA Networking
+
+Python Programming
+
+Google Cloud Fundamentals
+
+Machine Learning — Coursera
+
+DeepLearning.AI TensorFlow Developer
+
+STRENGTHS
+
+Strong problem-solving ability
+
+Excellent debugging and model optimization skills
+
+Clean code + quality documentation
+
+Rapid learning and adaptation
+
+Team collaboration & leadership

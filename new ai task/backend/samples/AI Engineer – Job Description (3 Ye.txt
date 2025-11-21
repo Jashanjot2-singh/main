@@ -1,0 +1,66 @@
+AI Engineer – Job Description (3 Years Experience)
+Role Overview
+
+We are seeking a highly skilled AI Engineer with 3+ years of experience to design, build, and deploy AI/ML-based solutions. The ideal candidate should have hands-on experience with machine learning, deep learning, LLMs, vector databases, and modern AI development frameworks. You will work closely with product, engineering, and data teams to build intelligent systems that power real-world applications.
+
+Key Responsibilities
+
+Develop, train, and optimize Machine Learning and Deep Learning models for classification, NLP, CV, and prediction use cases.
+
+Implement and fine-tune LLM-based systems (OpenAI, LLaMA, HuggingFace).
+
+Build RAG pipelines, vector embeddings, and document intelligence workflows.
+
+Deploy end-to-end AI solutions using FastAPI, Flask, or Node.js APIs.
+
+Work with cloud platforms (AWS/GCP/Azure) for model deployment and scaling.
+
+Integrate AI models with frontend/backends and automate ML workflows.
+
+Develop data pipelines including data preprocessing, feature engineering, and model evaluation.
+
+Optimize model performance using A/B testing, tuning, and inference optimization.
+
+Collaborate with cross-functional teams to convert business needs into AI solutions.
+
+Document system architecture, model behavior, and deployment workflows.
+
+Required Skills & Qualifications
+
+Bachelor’s degree in Computer Science, AI, Data Science, or related field.
+
+3+ years of professional experience in AI/ML engineering.
+
+Strong proficiency in Python, NumPy, Pandas, Scikit-learn, and ML workflows.
+
+Experience with Deep Learning frameworks like PyTorch or TensorFlow.
+
+Hands-on with HuggingFace Transformers, embeddings, and LLMs.
+
+Knowledge of RAG, vector databases (Qdrant, Pinecone, Chroma), and semantic search.
+
+Experience building REST APIs with FastAPI/Flask.
+
+Familiarity with Git, CI/CD, Docker (optional), and cloud computing.
+
+Strong problem-solving skills and ability to work independently.
+
+Preferred Skills
+
+Experience with agents, AutoGen, LangChain, or CrewAI.
+
+Knowledge of real-time processing and automation using Playwright or Selenium.
+
+Familiarity with MLOps tools (MLflow, Weights & Biases).
+
+Experience deploying models on GPUs or cloud AI services.
+
+What We Offer
+
+Opportunity to work on cutting-edge AI products.
+
+Fast-paced, innovative environment with ownership of solutions.
+
+Competitive salary, bonuses, and growth opportunities.
+
+Access to modern AI tools, GPUs, and cloud infrastructure.
