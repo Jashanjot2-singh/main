@@ -168,7 +168,7 @@ Inputs:
 
 
 def main():
-    api_key = "AIzaSyD93ZtDCdIZX2ZzEnYSVcHohuKGLACOvvo"
+    api_key = ""
     if not api_key:
         raise RuntimeError("Set GEMINI_API_KEY environment variable first.")
 
@@ -266,3 +266,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
